@@ -12,7 +12,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message as TelegramMessage, KeyboardButton, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
-from sqlalchemy import select, insert, desc
+from sqlalchemy import select, insert, desc, delete as sql_delete
 from sqlalchemy.orm import Session
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __, I18n, FSMI18nMiddleware
 
@@ -29,16 +29,16 @@ session = Session(bind=engine)
 def buttons_menu():
     rkb = ReplyKeyboardBuilder()
     rkb.add(*[
-        KeyboardButton(text = _("Leave a comment")),
-        KeyboardButton(text = _("My comments")),
-        KeyboardButton(text = _("Language"))
+        KeyboardButton(text=_("Leave a comment")),
+        KeyboardButton(text=_("My comments")),
+        KeyboardButton(text=_("Language"))
     ])
     rkb.adjust(3, 1)
     return rkb.as_markup(resize_keyboard=True)
 
 def delete_button(note_id: int):
     ikb = InlineKeyboardBuilder()
-    ikb.button(text=_("Delete"), callback_data=f"del:{note_id}")
+    ikb.button(text=_("Delete"), callback_data=f"delete_note:{note_id}")
     return ikb.as_markup()
 
 class NoteForm(StatesGroup):
@@ -46,7 +46,7 @@ class NoteForm(StatesGroup):
 
 @dp.message(F.text == __("Language"))
 async def language_handler(message: TelegramMessage, state: FSMContext) -> None:
-    btns = [KeyboardButton(text = "English"), KeyboardButton(text = "Uzbek")]
+    btns = [KeyboardButton(text="English"), KeyboardButton(text="Uzbek")]
     rkb = ReplyKeyboardBuilder()
     rkb.add(*btns)
     rkb.adjust(2)
@@ -74,7 +74,7 @@ async def command_start_handler(message: TelegramMessage) -> None:
         session.execute(query)
         session.commit()
     btn = buttons_menu()
-    await message.answer(_(f"Hello! {message.from_user.first_name}"), reply_markup=btn)
+    await message.answer(_("Hello!").format(name=message.from_user.first_name), reply_markup=btn)
 
 
 @dp.message(F.text == __("Leave a comment"))
@@ -96,18 +96,13 @@ async def save_note_handler(message: TelegramMessage, state: FSMContext) -> None
 
 @dp.message(F.text == __("My comments"))
 async def my_notes_handler(message: TelegramMessage, state: FSMContext) -> None:
-    # TZ bo'yicha oxirgi fikrlarni chiqarish (masalan, oxirgi 5 tasi)
     query = select(Message).where(Message.user_id == message.from_user.id).order_by(desc(Message.id)).limit(5)
     result = session.execute(query)
     messages = result.scalars().all()
 
     if messages:
         for msg in messages:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text=_("Delete"), callback_data=f"delete_note:{msg.id}")]
-                ]
-            )
+            keyboard = delete_button(msg.id)
             await message.answer(text=msg.thought, reply_markup=keyboard)
     else:
         await message.answer(_("You don't have any notes yet"))
@@ -116,7 +111,6 @@ async def my_notes_handler(message: TelegramMessage, state: FSMContext) -> None:
 @dp.callback_query(F.data.startswith("delete_note:"))
 async def delete_note_callback(call: CallbackQuery):
     note_id = int(call.data.split(":")[1])
-    from sqlalchemy import delete as sql_delete
     stmt = sql_delete(Message).where(Message.id == note_id)
     session.execute(stmt)
     session.commit()

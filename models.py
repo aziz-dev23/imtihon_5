@@ -1,8 +1,8 @@
 from os import getenv
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, BigInteger
-from sqlalchemy.orm import declarative_base, sessionmaker, Mapped, mapped_column, relationship
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, String, Text, ForeignKey, BigInteger
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 
 load_dotenv()
 
@@ -20,8 +20,7 @@ class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
     first_name: Mapped[str] = mapped_column(String(30))
-    messages: Mapped[list['Message']] = relationship(back_populates="user", cascade="all, delete-delete")
-
+    messages = relationship("Message", back_populates="user", cascade="delete")
 
 class Message(Base):
     __tablename__ = "messages"
