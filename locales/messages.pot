@@ -1,0 +1,60 @@
+# Uzbek translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-11-03 20:35+0500\n"
+"PO-Revision-Date: 2026-11-03 20:35+0500\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: uz\n"
+"Language-Team: uz <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: main.py:35
+msgid "Leave a comment"
+msgstr "Fikr qoldirish"
+
+#: main.py:36
+msgid "My comments"
+msgstr "Oxirgi 5 ta fikr"
+
+#: main.py:37
+msgid "Language"
+msgstr "Tilni o'zgartirish"
+
+#: main.py:44
+msgid "Choose language"
+msgstr "Tilni tanlang"
+
+#: main.py:57
+msgid "Change language"
+msgstr "Til muvaffaqiyatli o'zgartirildi!"
+
+#: main.py:69
+msgid "Hello! {}"
+msgstr "Assalomu alaykum! {}"
+
+#: main.py:86
+msgid "Enter note title"
+msgstr "Fikringizni yoki izohingizni kiriting:"
+
+#: main.py:97
+msgid "Successfully added"
+msgstr "Fikringiz muvaffaqiyatli saqlandi!"
+
+#: main.py:112
+msgid "Delete"
+msgstr "🗑 O'chirish"
+
+#: main.py:117
+msgid "Deleted successfully!"
+msgstr "Muvaffaqiyatli o'chirildi!"
+

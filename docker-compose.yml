@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: notes_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: notes_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  notes_bot:
+    build: .
+    image: notes_image:alpine
+    container_name: notes_con
+    restart: always
+    environment:
+      - BOT_TOKEN=SIZNING_BOT_TOKENINGIZ
+      - DB_USER=postgres
+      - DB_PASSWORD=1
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=notes_db
+    command: python3 main.py
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
